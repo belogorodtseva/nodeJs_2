@@ -1,47 +1,48 @@
-import { users } from './users';
+import { UsersModel } from './user.model';
+import { Op } from './data-access';
 
-export const addUser = (login: string, password: string, age: number) => {
-    const id = getNextId();
-    users.push({ login, password, age, id, isDeleted: false });
-    return id;
-};
+export default class DataService {
+    static async getUsers(): Promise<object> {
+        return await UsersModel.findAll();
+    }
 
-export const editUser = (id: number, login: string, password: string, age: number) => {
-    users.forEach(item => {
-        if (item.id !== id) return;
-        if (login) item.login = login;
-        if (password) item.password = password;
-        if (age) item.age = age;
-    });
-};
+    static async getUserById(id: number): Promise<object> {
+        return await UsersModel.findByPk(id);
+    }
 
-export const deleteUser = (id: number) => {
-    users.forEach(item => {
-        if (item.id === id) item.isDeleted = true;
-    });
-};
+    static async getAutoSuggestUsers(loginSubstring: string, limit: number): Promise<string> {
+        if (loginSubstring) {
+            return await UsersModel.findAll({
+                where: { login: { [Op.iLike]: `%${loginSubstring}%` } },
+                limit: limit || null
+            });
+        }
+        return await UsersModel.findAll();
+    }
 
-export const getUserById = (id: number): object => {
-    return users[users.findIndex(item => item.id === id)];
-};
+    static async deleteUser(id: number): Promise<boolean> {
+        const result: Array<number> = await UsersModel.update(
+            { isdeleted: true },
+            { where: { id } }
+        );
+        return (result[0] !== 0);
+    }
 
-export const getAutoSuggestUsers = (loginSubstring: string, limit: string) => {
-    const regexp = new RegExp(loginSubstring, 'i');
+    static async addUser(login: string, password: string, age: number): Promise<string> {
+        const user: { id: string } = await UsersModel.create({ login, password, age });
+        return user.id;
+    }
 
-    return users
-        .filter(item => regexp.test(item.login))
-        .sort((a, b) => {
-            if (a.login > b.login) return 1;
-            if (a.login < b.login) return -1;
-            return 0;
-        })
-        .splice(0, Number(limit));
-};
+    static async editUser(id: number, login: string, password: string, age: number): Promise<boolean> {
+        const result: Array<number> = await UsersModel.update(
+            { login, password, age },
+            { where: { id } }
+        );
+        return (result[0] !== 0);
+    }
 
-const getNextId = (): number => {
-    const currentId = users.reduce((prev, item) => {
-        const id = item.id;
-        return (id > prev) ? id : prev;
-    }, 0);
-    return currentId + 1;
-};
+    static async isUserExist(id: number): Promise<boolean> {
+        const count: number = await UsersModel.count({ where: { id } });
+        return (count !== 0);
+    }
+}

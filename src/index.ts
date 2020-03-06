@@ -1,16 +1,18 @@
 import express, { Router, Application } from 'express';
-import {
-    create,
-    getById,
-    suggest,
-    update,
-    remove
-} from './requests.service';
+import { UserRouter } from './router';
+import { dbInit } from './data-access';
 
-const index: Application = express();
+const app: Application = express();
 const router: Router = express.Router();
 
-index.listen(3000, () => console.log(
+app.use(express.json());
+app.use('/', router);
+
+UserRouter(router);
+
+dbInit('\x1b[32mDataBase "node_task" successfully connected');
+
+app.listen(3000, () => console.log(
     '\n\n', '--------------------------------------------',
     '\n\n', 'Application running on http://localhost:3000', '\n\n',
     '\x1b[32mGet user by id: http://localhost:3000/user/:id [GET]' + '\n',
@@ -18,12 +20,3 @@ index.listen(3000, () => console.log(
     '\x1b[36mCreate user: http://localhost:3000/user [POST]' + '\n',
     '\x1b[33mUpdate user by id: http://localhost:3000/user/:id [PUT]' + '\n',
     '\x1b[31mDelete user by id: http://localhost:3000/user/:id [DELETE]' + '\n',));
-
-index.use(express.json());
-index.use('/', router);
-
-router.get('/user/:id', getById);
-router.get('/suggest', suggest);
-router.post('/user', create);
-router.put('/user/:id', update);
-router.delete('/user/:id', remove);
