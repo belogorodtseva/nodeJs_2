@@ -1,7 +1,7 @@
-import { UsersModel } from './user.model';
-import { Op } from './data-access';
+import { UsersModel } from '../models/UserModel';
+import { Op } from '../data-access';
 
-export default class DataService {
+export default class UserService {
     static async getUsers(): Promise<object> {
         return await UsersModel.findAll();
     }

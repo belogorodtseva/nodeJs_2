@@ -1,5 +1,5 @@
 import express, { Router, Application } from 'express';
-import { UserRouter } from './router';
+import { UserController } from './controllers/user/UserController';
 import { dbInit } from './data-access';
 
 const app: Application = express();
@@ -8,7 +8,7 @@ const router: Router = express.Router();
 app.use(express.json());
 app.use('/', router);
 
-UserRouter(router);
+UserController(router);
 
 dbInit('\x1b[32mDataBase "node_task" successfully connected');
 

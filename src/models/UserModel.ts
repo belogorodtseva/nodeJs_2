@@ -1,5 +1,5 @@
-import { Sequelize, Server } from './data-access';
-import { UserModelStatic } from './userModelStatic';
+import { Sequelize, Server } from '../data-access';
+import { UserModelStatic } from '../typings/entities/UserTypes';
 
 export const UsersModel = <UserModelStatic>Server.define('user', {
     id: {
@@ -20,8 +20,9 @@ export const UsersModel = <UserModelStatic>Server.define('user', {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    isdeleted: {
-        type: Sequelize.BOOLEAN
+    isDeleted: {
+        type: Sequelize.BOOLEAN,
+        field: 'isDeleted'
     }
 }, {
     timestamps: false,

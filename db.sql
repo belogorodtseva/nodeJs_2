@@ -6,7 +6,7 @@ CREATE TABLE users.users
     login character varying NOT NULL,
     password character varying NOT NULL,
     age integer NOT NULL,
-    isdeleted boolean DEFAULT false,
+    'isDeleted' boolean DEFAULT false,
     PRIMARY KEY (id)
 );
 
@@ -16,7 +16,7 @@ OWNER to postgres;
 INSERT INTO users.users(
 	login, password, age)
 	VALUES ('Anna', 'xxx123', 23);
-	
+
 INSERT INTO users.users(
 	login, password, age)
 	VALUES ('AnnaAnna', 'xxx123xxx123', 46);

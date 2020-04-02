@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserDTO } from '../userModelStatic';
+import { UserDTO } from '../../typings/entities/UserTypes';
 import Joi from '@hapi/joi';
 
 export const validationMiddleware = async (req: Request, res: Response, next: NextFunction, validationSchema: any): Promise<void> => {
@@ -13,7 +13,7 @@ export const validationMiddleware = async (req: Request, res: Response, next: Ne
   }
 };
 
-export const addUserSchema: Joi.ObjectSchema<{ login: string; password: string; age: number; }> = Joi.object({
+export const addUserSchema: Joi.ObjectSchema<UserDTO> = Joi.object({
     login: Joi
         .string()
         .pattern(new RegExp(/^[a-z0-9_.]+$/i))
