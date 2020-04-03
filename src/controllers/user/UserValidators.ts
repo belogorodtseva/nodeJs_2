@@ -33,7 +33,7 @@ export const addUserSchema: Joi.ObjectSchema<UserDTO> = Joi.object({
         .required()
 });
 
-export const editUserSchema: Joi.ObjectSchema<{ login: string; password: string; age: number; }> = Joi.object({
+export const editUserSchema: Joi.ObjectSchema<UserDTO> = Joi.object({
     login: Joi
         .string()
         .pattern(new RegExp(/^[a-z0-9_.]+$/i)),

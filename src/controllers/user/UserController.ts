@@ -29,12 +29,16 @@ export const UserController = (router: Router): void => {
         async (req: Request, res: Response): Promise<void> => {
             const { login, password, age }: UserDTO = req.body;
             const id: number = Number(req.params.id);
-            const success: boolean = await UserService.editUser(id, login, password, age);
-            if (success) {
-                res.status(200).json({ message: 'user edited success' });
-                return;
+            const isUserExist: Object = await UserService.isUserExist(id);
+            if (isUserExist) {
+                const success: boolean = await UserService.editUser(id, login, password, age);
+                if (success) {
+                    res.status(200).json({ message: 'user edited success' });
+                    return;
+                }
+                res.status(400).json({ message: 'something went wrong' });
             }
-            res.status(400).json({ message: 'something went wrong' });
+            res.status(404).json({ message: 'user is not excist' });
         }
     );
 
