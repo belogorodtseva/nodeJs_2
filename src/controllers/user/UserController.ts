@@ -40,11 +40,15 @@ export const UserController = (router: Router): void => {
 
     router.delete('/user/:id', async (req: Request, res: Response): Promise<void> => {
         const id: number = Number(req.params.id);
-        const success: boolean = await UserService.deleteUser(id);
-        if (success) {
-            res.status(200).json({ message: 'user deleted success' });
-            return;
+        const isUserExist: Object = await UserService.isUserExist(id);
+        if (isUserExist) {
+            const success: boolean = await UserService.deleteUser(id);
+            if (success) {
+                res.status(200).json({ message: 'user deleted success' });
+                return;
+            }
+            res.status(400).json({ message: 'something went wrong' });
         }
-        res.status(400).json({ message: 'something went wrong' });
+        res.status(404).json({ message: 'user is not excist' });
     });
 };
