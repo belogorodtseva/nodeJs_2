@@ -5,6 +5,15 @@ import { UserDTO } from '../../typings/entities/UserTypes';
 import { addUserSchema, editUserSchema, validationMiddleware } from './UserValidators';
 
 export const UserController = (router: Router): void => {
+    router.param('id', async (_req: Request, res: Response, next: NextFunction, id: string): Promise<void> => {
+        const success: boolean = await UserService.isUserExist(Number(id));
+        if (success) {
+            next();
+            return;
+        }
+        res.status(404).json({ message: `user not found` });
+    });
+
     router.get('/user/:id', async (req: Request, res: Response): Promise<void> => {
         const id: number = Number(req.params.id);
         const user: Object = await UserService.getUserById(id);
@@ -29,30 +38,22 @@ export const UserController = (router: Router): void => {
         async (req: Request, res: Response): Promise<void> => {
             const { login, password, age }: UserDTO = req.body;
             const id: number = Number(req.params.id);
-            const isUserExist: Object = await UserService.isUserExist(id);
-            if (isUserExist) {
-                const success: boolean = await UserService.editUser(id, login, password, age);
-                if (success) {
-                    res.status(200).json({ message: 'user edited success' });
-                    return;
-                }
-                res.status(400).json({ message: 'something went wrong' });
+            const success: boolean = await UserService.editUser(id, login, password, age);
+            if (success) {
+                res.status(200).json({ user: { login, password, age }, message: 'user edited success' });
+                return;
             }
-            res.status(404).json({ message: 'user is not excist' });
+            res.status(400).json({ message: 'something went wrong' });
         }
     );
 
     router.delete('/user/:id', async (req: Request, res: Response): Promise<void> => {
         const id: number = Number(req.params.id);
-        const isUserExist: Object = await UserService.isUserExist(id);
-        if (isUserExist) {
-            const success: boolean = await UserService.deleteUser(id);
-            if (success) {
-                res.status(200).json({ message: 'user deleted success' });
-                return;
-            }
-            res.status(400).json({ message: 'something went wrong' });
+        const success: boolean = await UserService.deleteUser(id);
+        if (success) {
+            res.status(200).json({ message: 'user deleted success' });
+            return;
         }
-        res.status(404).json({ message: 'user is not excist' });
+        res.status(400).json({ message: 'something went wrong' });
     });
 };

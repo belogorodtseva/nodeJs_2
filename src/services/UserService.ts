@@ -22,7 +22,7 @@ export default class UserService {
 
     static async deleteUser(id: number): Promise<boolean> {
         const result: Array<number> = await UsersModel.update(
-            { isdeleted: true },
+            { isDeleted: true },
             { where: { id } }
         );
         return (result[0] !== 0);
